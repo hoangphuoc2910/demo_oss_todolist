@@ -1,24 +1,20 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// --- BẮT ĐẦU SỬA ---
-// 1. Đăng ký dịch vụ CORS (Phải bọc trong AddCors)
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", // Đặt tên ngắn gọn là AllowAll
-        policy => policy.AllowAnyOrigin()  // Chấp nhận mọi nơi (InfinityFree, Localhost...)
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+// 1. Cấu hình CORS mở cho Docker Local
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", policy => 
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
-// --- KẾT THÚC SỬA ---
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// 2. Kích hoạt CORS (Dùng đúng tên đã đặt ở trên)
-app.UseCors("AllowAll");
+// 2. Phục vụ index.html từ wwwroot
+app.UseDefaultFiles(); 
+app.UseStaticFiles();
 
-app.UseAuthorization();
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.Run();
